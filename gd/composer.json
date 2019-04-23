@@ -1,0 +1,23 @@
+{
+    "name": "zhangpeng/gd",
+    "description": "gd",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "张朋",
+            "email": "523631013@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "zhangpeng\\gd\\": "src/"
+        },
+        "files": [
+            "helper/helper.php"
+        ]
+    }
+}
