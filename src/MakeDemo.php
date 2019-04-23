@@ -1,5 +1,5 @@
 <?php
-namespace benbun\choujiang;
+namespace zhangpeng\gd;
 
 use think\App;
 use think\Config;
