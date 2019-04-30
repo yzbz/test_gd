@@ -10,17 +10,95 @@ use think\Request;
 // gd
 class {%className%} extends Controller {
 
-    // 抽奖
-    public function make_share_img() {
-        // 接口请求限制
-        $ipStr = request()->ip();
-        LimitManager::requestLimit($ipStr);
+    public function shareImgSupply($data = []){
+        $data = [
+            'id' => time(),
+            'recommend_cnt' => 502,
+            'type_name' => '板材',
+            'name' => '优质花梨木',
+            'image' => 'http://yzbz-test.oss-cn-beijing.aliyuncs.com/composer/new-10.png',
+            'mobile_phone' => '157****4412',
+        ];
+        $fileName = "img/supply_goods_id_{$data['id']}.png";
+        //创建画布
+        $im = imagecreatetruecolor(800, 640);
+        //填充画布背景色
+        $color = imagecolorallocate($im, 255, 255, 255);
+        imagefill($im, 0, 0, $color);
+        //字体文件
+        $font_file = "img/fzhtjt.ttf";
+        //设定字体的颜色
+        $font_color_1 = ImageColorAllocate ($im, 115, 39, 30); //电话底色 改为深红色
+        $font_color_2 = ImageColorAllocate ($im, 253, 241, 218); //白色
 
-        // 抽奖
-        $userId = 7;// 用户id
-        $lottery = new LotteryMgr(config('draw_conf'));
-        $prizeId = $lottery->draw($userId);
-        dump($prizeId);
-        dump($lottery->getPrizeInfo($prizeId));
+        //背景图
+        $backgroundName = $this->download($data['image']);
+        $backgroundImg = $this->createImageFromFile($backgroundName);
+        list($b_width, $b_height) = getimagesize($backgroundName);
+        imagecopyresized($im, $backgroundImg, 0, 0, 0, 0, 800, 640, $b_width, $b_height);
+
+        //产地
+        if (mb_strlen($data['type_name']) == 3) {
+            imagefilledrectangle($im,0,0,190,80,$font_color_1);
+            imagettftext($im, 32,0, 30, 56, $font_color_2 ,$font_file, $data['type_name']);
+        }else if (mb_strlen($data['type_name']) == 2) {
+            imagefilledrectangle($im,0,0,160,80,$font_color_1);
+            imagettftext($im, 32,0, 40, 56, $font_color_2 ,$font_file, $data['type_name']);
+        }else if (mb_strlen($data['type_name']) == 4) {
+            imagefilledrectangle($im,0,0,235,80,$font_color_1);
+            imagettftext($im, 32,0, 30, 56, $font_color_2 ,$font_file, $data['type_name']);
+        }else if (mb_strlen($data['type_name']) == 5) {
+            imagefilledrectangle($im,0,0,280,80,$font_color_1);
+            imagettftext($im, 32,0, 30, 56, $font_color_2 ,$font_file, $data['type_name']);
+        }else if (mb_strlen($data['type_name']) > 5) {
+            imagefilledrectangle($im,0,0,235,80,$font_color_1);
+            imagettftext($im, 38,0, 10, 56, $font_color_2 ,$font_file, mb_substr($data['type_name'], 0, 4) . '...');
+        }else {
+            imagefilledrectangle($im,0,0,160,80,$font_color_1);
+            imagettftext($im, 38,0, 80, 56, $font_color_2 ,$font_file, '原木');
+        }
+
+        //中部方框
+        $tipImg2 = $this->createImageFromFile('img/bg.png');
+        $tipImg2W = imagesx($tipImg2);
+        $tipImg2H = imagesy($tipImg2);
+        $white = imagecolorallocate($tipImg2, 255, 255, 255);
+        imagecolortransparent($tipImg2,$white);
+        imagecopy($im, $tipImg2, 0, 490, 0, 0, $tipImg2W,$tipImg2H);
+        if ($data['browse_cnt'] > 50) {
+            //推送次数
+            $data['browse_cnt'] = $this->formatBrowseCnt($data['browse_cnt']);
+            imagettftext($im, 30,0, 20, 550, $font_color_2 ,$font_file, '推送人数: ' . $data['browse_cnt']);
+        }
+        //产品名称
+        if (mb_strlen($data['name']) <= 7) {
+            imagettftext($im, 38,0, 20, 620, $font_color_2 ,$font_file, $data['name']);
+        } else {
+            imagettftext($im, 38,0, 20, 620, $font_color_2 ,$font_file, mb_substr($data['name'], 0, 6) . '...');
+        }
+
+        //电话号码
+        if (strlen($data['mobile_phone']) > 13) {
+            $data['mobile_phone'] = substr($data['mobile_phone'], 0, 11);
+        }
+        imagettftext($im, 42,0, 430, 605, $font_color_2 ,$font_file, $data['mobile_phone']);
+
+        //输出图片
+        imagepng ($im, $fileName);
+        //释放空间
+        imagedestroy($im);
+        unlink($backgroundName);
+        dump($fileName);
+    }
+
+    //格式化推荐次数
+    private function formatBrowseCnt($browseCnt){
+        $browseCnt = intval($browseCnt);
+        if ($browseCnt < 100000) {
+            return $browseCnt;
+        } elseif ($browseCnt < 1000000) {
+            return floor($browseCnt / 10000) . 'W+';
+        }
+        return '100W+';
     }
 }
