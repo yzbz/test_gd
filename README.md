@@ -14,9 +14,9 @@
 #### 安装教程
 
 1. `composer require zhangpeng/gd 1.0`
-    创建项目成功以后，可以通过`php think`,查看提示可用操作 demo gd
-2. `php think demo:gd`
-    执行完成后会提示  app\demo\controller\gd created successfully.
+    创建项目成功以后，可以通过`php think`,查看提示可用操作 demo Gd
+2. `php think demo:Gd`
+    执行完成后会提示  app\demo\controller\Gd created successfully.
 
 ## Documentation
 
