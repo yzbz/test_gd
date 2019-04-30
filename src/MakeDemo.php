@@ -13,7 +13,7 @@ class MakeDemo extends Command {
 
     protected function configure() {
         parent::configure();
-        $this->setName('demo:gd')
+        $this->setName('demo:Gd')
             ->setDescription('Create a new gd demo');
     }
 
@@ -27,7 +27,7 @@ class MakeDemo extends Command {
 
     protected function execute(Input $input, Output $output) {
         // $name = trim($input->getArgument('name'));
-        $name = 'demo/gd';
+        $name = 'demo/Gd';
         $classname = $this->getClassName($name);
 
         $pathname = $this->getPathName($classname);

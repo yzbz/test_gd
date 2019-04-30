@@ -2,8 +2,6 @@
 
 namespace {%namespace%};
 
-use app\common\util\LimitManager;
-use benbun\lottery\Lottery as LotteryMgr;
 use think\Controller;
 use think\Request;
 
