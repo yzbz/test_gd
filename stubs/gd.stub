@@ -7,185 +7,366 @@ use think\Request;
 
 // gd
 class {%className%} extends Controller {
+          public function main($data = []){
+                 $data = [
+                     'id' => time(),
+                     'browse_cnt' => 502,
+                     'type_name' => '板材',
+                     'name' => '优质花梨木',
+                     'image' => 'http://yzbz-test.oss-cn-beijing.aliyuncs.com/composer/new-10.png',
+                     'mobile_phone' => '157****4412',
+                 ];
+                 $fileName = ROOT_PATH . "gd_demo/supply_goods_id_{$data['id']}.png";
+                 //创建画布
+                 $im = imagecreatetruecolor(800, 640);
+                 //填充画布背景色
+                 $color = imagecolorallocate($im, 255, 255, 255);
+                 imagefill($im, 0, 0, $color);
+                 //字体文件
+                 $font_file = ROOT_PATH . "gd_demo/ziti.ttf";
+                 //设定字体的颜色
+                 $font_color_1 = ImageColorAllocate ($im, 115, 39, 30); //电话底色 改为深红色
+                 $font_color_2 = ImageColorAllocate ($im, 253, 241, 218); //白色
 
-     public function main($data = []){
-            $data = [
-                'id' => time(),
-                'browse_cnt' => 502,
-                'type_name' => '板材',
-                'name' => '优质花梨木',
-                'image' => 'http://yzbz-test.oss-cn-beijing.aliyuncs.com/composer/new-10.png',
-                'mobile_phone' => '157****4412',
-            ];
-            $fileName = ROOT_PATH . "gd_demo/supply_goods_id_{$data['id']}.png";
-            //创建画布
-            $im = imagecreatetruecolor(800, 640);
-            //填充画布背景色
-            $color = imagecolorallocate($im, 255, 255, 255);
-            imagefill($im, 0, 0, $color);
-            //字体文件
-            $font_file = ROOT_PATH . "gd_demo/ziti.ttf";
-            //设定字体的颜色
-            $font_color_1 = ImageColorAllocate ($im, 115, 39, 30); //电话底色 改为深红色
-            $font_color_2 = ImageColorAllocate ($im, 253, 241, 218); //白色
+                 //背景图
+                 $backgroundName = $this->download($data['image']);
+                 $backgroundImg = $this->createImageFromFile($backgroundName);
+                 list($b_width, $b_height) = getimagesize($backgroundName);
+                 imagecopyresized($im, $backgroundImg, 0, 0, 0, 0, 800, 640, $b_width, $b_height);
 
-            //背景图
-            $backgroundName = $this->download($data['image']);
-            $backgroundImg = $this->createImageFromFile($backgroundName);
-            list($b_width, $b_height) = getimagesize($backgroundName);
-            imagecopyresized($im, $backgroundImg, 0, 0, 0, 0, 800, 640, $b_width, $b_height);
+                 //产地
+                 if (mb_strlen($data['type_name']) == 3) {
+                     imagefilledrectangle($im,0,0,190,80,$font_color_1);
+                     imagettftext($im, 32,0, 30, 56, $font_color_2 ,$font_file, $data['type_name']);
+                 }else if (mb_strlen($data['type_name']) == 2) {
+                     imagefilledrectangle($im,0,0,160,80,$font_color_1);
+                     imagettftext($im, 32,0, 40, 56, $font_color_2 ,$font_file, $data['type_name']);
+                 }else if (mb_strlen($data['type_name']) == 4) {
+                     imagefilledrectangle($im,0,0,235,80,$font_color_1);
+                     imagettftext($im, 32,0, 30, 56, $font_color_2 ,$font_file, $data['type_name']);
+                 }else if (mb_strlen($data['type_name']) == 5) {
+                     imagefilledrectangle($im,0,0,280,80,$font_color_1);
+                     imagettftext($im, 32,0, 30, 56, $font_color_2 ,$font_file, $data['type_name']);
+                 }else if (mb_strlen($data['type_name']) > 5) {
+                     imagefilledrectangle($im,0,0,235,80,$font_color_1);
+                     imagettftext($im, 38,0, 10, 56, $font_color_2 ,$font_file, mb_substr($data['type_name'], 0, 4) . '...');
+                 }else {
+                     imagefilledrectangle($im,0,0,160,80,$font_color_1);
+                     imagettftext($im, 38,0, 80, 56, $font_color_2 ,$font_file, '原木');
+                 }
 
-            //产地
-            if (mb_strlen($data['type_name']) == 3) {
-                imagefilledrectangle($im,0,0,190,80,$font_color_1);
-                imagettftext($im, 32,0, 30, 56, $font_color_2 ,$font_file, $data['type_name']);
-            }else if (mb_strlen($data['type_name']) == 2) {
-                imagefilledrectangle($im,0,0,160,80,$font_color_1);
-                imagettftext($im, 32,0, 40, 56, $font_color_2 ,$font_file, $data['type_name']);
-            }else if (mb_strlen($data['type_name']) == 4) {
-                imagefilledrectangle($im,0,0,235,80,$font_color_1);
-                imagettftext($im, 32,0, 30, 56, $font_color_2 ,$font_file, $data['type_name']);
-            }else if (mb_strlen($data['type_name']) == 5) {
-                imagefilledrectangle($im,0,0,280,80,$font_color_1);
-                imagettftext($im, 32,0, 30, 56, $font_color_2 ,$font_file, $data['type_name']);
-            }else if (mb_strlen($data['type_name']) > 5) {
-                imagefilledrectangle($im,0,0,235,80,$font_color_1);
-                imagettftext($im, 38,0, 10, 56, $font_color_2 ,$font_file, mb_substr($data['type_name'], 0, 4) . '...');
-            }else {
-                imagefilledrectangle($im,0,0,160,80,$font_color_1);
-                imagettftext($im, 38,0, 80, 56, $font_color_2 ,$font_file, '原木');
-            }
+                 //中部方框
+                 $tipImg2 = $this->createImageFromFile(ROOT_PATH . 'gd_demo/bg.png');
+                 $tipImg2W = imagesx($tipImg2);
+                 $tipImg2H = imagesy($tipImg2);
+                 $white = imagecolorallocate($tipImg2, 255, 255, 255);
+                 imagecolortransparent($tipImg2,$white);
+                 imagecopy($im, $tipImg2, 0, 490, 0, 0, $tipImg2W,$tipImg2H);
+                 if ($data['browse_cnt'] > 50) {
+                     //推送次数
+                     $data['browse_cnt'] = $this->formatBrowseCnt($data['browse_cnt']);
+                     imagettftext($im, 30,0, 20, 550, $font_color_2 ,$font_file, '推送人数: ' . $data['browse_cnt']);
+                 }
+                 //产品名称
+                 if (mb_strlen($data['name']) <= 7) {
+                     imagettftext($im, 38,0, 20, 620, $font_color_2 ,$font_file, $data['name']);
+                 } else {
+                     imagettftext($im, 38,0, 20, 620, $font_color_2 ,$font_file, mb_substr($data['name'], 0, 6) . '...');
+                 }
 
-            //中部方框
-            $tipImg2 = $this->createImageFromFile(ROOT_PATH . 'gd_demo/bg.png');
-            $tipImg2W = imagesx($tipImg2);
-            $tipImg2H = imagesy($tipImg2);
-            $white = imagecolorallocate($tipImg2, 255, 255, 255);
-            imagecolortransparent($tipImg2,$white);
-            imagecopy($im, $tipImg2, 0, 490, 0, 0, $tipImg2W,$tipImg2H);
-            if ($data['browse_cnt'] > 50) {
-                //推送次数
-                $data['browse_cnt'] = $this->formatBrowseCnt($data['browse_cnt']);
-                imagettftext($im, 30,0, 20, 550, $font_color_2 ,$font_file, '推送人数: ' . $data['browse_cnt']);
-            }
-            //产品名称
-            if (mb_strlen($data['name']) <= 7) {
-                imagettftext($im, 38,0, 20, 620, $font_color_2 ,$font_file, $data['name']);
-            } else {
-                imagettftext($im, 38,0, 20, 620, $font_color_2 ,$font_file, mb_substr($data['name'], 0, 6) . '...');
-            }
+                 //电话号码
+                 if (strlen($data['mobile_phone']) > 13) {
+                     $data['mobile_phone'] = substr($data['mobile_phone'], 0, 11);
+                 }
+                 imagettftext($im, 42,0, 430, 605, $font_color_2 ,$font_file, $data['mobile_phone']);
 
-            //电话号码
-            if (strlen($data['mobile_phone']) > 13) {
-                $data['mobile_phone'] = substr($data['mobile_phone'], 0, 11);
-            }
-            imagettftext($im, 42,0, 430, 605, $font_color_2 ,$font_file, $data['mobile_phone']);
+                 //输出图片
+                 imagepng ($im, $fileName);
+                 //释放空间
+                 imagedestroy($im);
+                 unlink($backgroundName);
+                 dump($fileName);
+         }
 
-            //输出图片
-            imagepng ($im, $fileName);
-            //释放空间
-            imagedestroy($im);
-            unlink($backgroundName);
-            dump($fileName);
-    }
+         public function multImg($data = []){
+             $data = [
+                 'id' => time(),
+                 'company_name' => '北京某某科技有限公司',
+                 'trademark' => 'https://yzbz-test.oss-cn-beijing.aliyuncs.com/composer/company_logo.png',
+                 'range' => '电脑图文设计制作、企业形象策划、展览展示服务、市场调研、摄影服务、资料翻译服务、礼仪服务、赛事活动策划、公关活动策划、快递服务、室内保洁服务、婚庆礼仪服务、餐饮管理、其他居民服务、市政工程配套服务、（放地产开发、物业管理1年期）',
+                 'remark' => '本总部位于上海，在全国各地设有相应的办事处或服务机构。2003年，公司作为第一家高科技公司，入驻上海国家现代化服务业软件 产业化基地(即国家863软件孵化器（上海）基地)，购地10000平方米，自主投资数千万元，建设海鼎大楼，并于2005年正式启用。
+     　　本公司是国家863产业化研发基地，国家“九五”、“十五”重点项目承担者，及上海市高新技术企业、上海市科技型骨干企业。在为众多 零售流通企业提供信息化解决方案、产品和服务的同时，注重理论研究，先后出版了《现代*****导论》《大规模**道创新》等多部专著，每年原创《**Message》，举办用户研讨会，发布**简报等，分享**在商业零售信息化领域的积累与发展。',
+                 'contact_addr' => '北京市海淀区中关村科贸大厦11层11**李小姐收',
+                 'miniapp_img' => 'http://yzbz-test.oss-cn-beijing.aliyuncs.com/composer/miniapp_code1.png',
+                 'contact_name' => '张先生',
+                 'contact_phone' => '010-62770921',
+             ];
+             $fileName = ROOT_PATH . "gd_demo/shop_info_id_{$data['id']}.png"; //临时存储
+             //创建画布
+             $rangeWidth = 0; //没有主营的情况
+             $remarkWidth = 0; //没有简介的情况
+             if (!empty($data['range'])) $rangeWidth = 160;
+             if (!empty($data['remark'])) $remarkWidth = 230;
+             $width = 750;
+             $height = 1375;
+             if ($rangeWidth == 0) {
+                 $height = $height - 160;
+             }
+             if ($remarkWidth == 0) {
+                 $height = $height - 230;
+             }
+             $im = imagecreatetruecolor($width, $height);
+             //填充画布背景色
+             $color = imagecolorallocate($im, 255, 255, 255);
+             imagefill($im, 0, 0, $color);
+             //字体文件
+             $font_file = ROOT_PATH . "gd_demo/ziti.ttf";
+             //设定字体的颜色
+             $font_color_1 = ImageColorAllocate ($im, 70, 143, 247); //主体字颜色
+             $font_color_2 = ImageColorAllocate ($im, 51, 51, 51); //小字颜色
+             //四个边框
+             $borderWidth = 25;
+             imagefilledrectangle($im, 0, 0, $width, $borderWidth, $font_color_1); //上
+             imagefilledrectangle($im, 0, $height - $borderWidth, $width, $height, $font_color_1); //下
+             imagefilledrectangle($im, 0, 0, $borderWidth, $height, $font_color_1); //左
+             imagefilledrectangle($im, $width - $borderWidth, 0, $width, $height, $font_color_1); //右
 
-    //格式化推荐次数
-    private function formatBrowseCnt($browseCnt){
-        $browseCnt = intval($browseCnt);
-        if ($browseCnt < 100000) {
-            return $browseCnt;
-        } elseif ($browseCnt < 1000000) {
-            return floor($browseCnt / 10000) . 'W+';
-        }
-        return '100W+';
-    }
+             //公司logo
+             $t_width = 0; // logo的宽度
+             if (!empty($data['trademark'])) {
+                 $trademarkImgSrc = $this->download($data['trademark']);
+                 $trademarkImg = $this->createImageFromFile($trademarkImgSrc);
+                 list($t_width, $t_height) = getimagesize($trademarkImgSrc);
+                 $t_width = 100; //未使用指定宽高的图片
+                 $t_height = 100;
+                 imagecopyresized($im, $trademarkImg, $borderWidth + 80, $borderWidth + 25, 0, 0, 100, 100, $t_width, $t_height);
+             }
+             //公司名称
+             if ($t_width == 0) {
+                 if (mb_strlen($data['company_name']) <= 18) {
+                     imagettftext($im, 28,0, $borderWidth + $t_width + 40 + (18 - mb_strlen($data['company_name'])) / 2 * 30, $borderWidth + 42 + 34, $font_color_1 ,$font_file, $data['company_name']);
+                 } else {
+                     imagettftext($im, 28,0, $borderWidth + $t_width + 40, $borderWidth + 42 + 34, $font_color_1 ,$font_file, mb_substr($data['company_name'], 0, 16) . '...' );
+                 }
+             }
+             else {
+                 if (mb_strlen($data['company_name']) <= 14) {
+                     imagettftext($im, 28,0, $borderWidth + $t_width + 100, $borderWidth + 42 + 34, $font_color_1 ,$font_file, $data['company_name']);
+                 } else {
+                     imagettftext($im, 28,0, $borderWidth + $t_width + 100, $borderWidth + 42 + 34, $font_color_1 ,$font_file, mb_substr($data['company_name'], 0, 12) . '...' );
+                 }
+             }
+             //头部展示图片
+             $backgroundName = ROOT_PATH . 'gd_demo/shop_default_img.jpg';
+             $backgroundImg = $this->createImageFromFile($backgroundName);
+             list($b_width, $b_height) = getimagesize($backgroundName);
+             imagecopyresized($im, $backgroundImg, $borderWidth + 29, $borderWidth + 140, 0, 0, 640, 450, $b_width, $b_height);
 
-    private function download($url, $path = '') {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-        $file = curl_exec($ch);
-        curl_close($ch);
-        $filename = pathinfo($url, PATHINFO_BASENAME);
-        $newPath = $path . time() . $this->rand_string(6) . $filename;
-        $resource = fopen($newPath, 'a');
-        fwrite($resource, $file);
-        fclose($resource);
-        return $newPath;
-    }
+             //小程序码，提示语
+             $miniAppImgSource = $this->download($data['miniapp_img']);
+             $miniAppImg = $this->createImageFromFile($miniAppImgSource);
+             list($m_width, $m_height) = getimagesize($miniAppImgSource);
+     //        $m_width = 50; //未使用指定大小的小程序码
+     //        $m_height = 50;
+             imagecopyresized($im, $miniAppImg, $borderWidth + 216 + 244, $borderWidth + $rangeWidth + $remarkWidth + 550 + 35 + 42, 0, 0, 200, 200, $m_width, $m_height);
+             imagettftext($im, 12,0, $borderWidth + 500, $borderWidth + $rangeWidth + $remarkWidth + 860, $font_color_2 ,$font_file, '长按图片进入店');
+             imagettftext($im, 12,0, $borderWidth + 500, $borderWidth + $rangeWidth + $remarkWidth + 860 + 25, $font_color_2 ,$font_file, '铺了解更多信息');
 
-    private function rand_string($len = 6, $type = '', $addChars = '') {
-    	$str = '';
-    	switch ($type) {
-    	case 0:
-    		$chars = 'ABCDEFGHIJabcdefghijklmnopqrstuvwxyzKLMNOPQRSTUVWXYZ' . $addChars;
-    		break;
-    	case 1:
-    		$chars = str_repeat('0123456789', 3);
-    		break;
-    	case 2:
-    		$chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' . $addChars;
-    		break;
-    	case 3:
-    		$chars = 'abcdefghijklmnopqrstuvwxyz' . $addChars;
-    		break;
-    	case 4:
-    		$chars = "们以我到面说种过命度革而多子后自社加他会作时要动国产的一是工就年阶义发成部民可出能方进在了不和有大这主中人上为来分生对于学下级地个用同行着水理化争现所二起政三好十战无农使性前等反体合斗路图把结第里正新开论之物从当两些还天资事队批点育重其思与间内去因件日利相由压员气业代全组数果期导平各基或月毛然如应形想制心样干都向变关问比展那它最及外没看治提五解系林者米群头意只明四道马认次文通但条较克又公孔领军流入接席位情运器并飞原油放立题质指建区验活众很教决特此常石强极土少已根共直团统式转别造切九你取西持总料连任志观调七么山程百报更见必真保热委手改管处己将修支识病象几先老光专什六型具示复安带每东增则完风回南广劳轮科北打积车计给节做务被整联步类集号列温装即毫知轴研单色坚据速防史拉世设达尔场织历花受求传口断况采精金界品判参层止边清至万确究书术状厂须离再目海交权且儿青才证低越际八试规斯近注办布门铁需走议县兵固除般引齿千胜细影济白格效置推空配刀叶率述今选养德话查差半敌始片施响收华觉备名红续均药标记难存测士身紧液派准斤角降维板许破述技消底床田势端感往神便贺村构照容非搞亚磨族火段算适讲按值美态黄易彪服早班麦削信排台声该击素张密害侯草何树肥继右属市严径螺检左页抗苏显苦英快称坏移约巴材省黑武培著河帝仅针怎植京助升王眼她抓含苗副杂普谈围食射源例致酸旧却充足短划剂宣环落首尺波承粉践府鱼随考刻靠够满夫失包住促枝局菌杆周护岩师举曲春元超负砂封换太模贫减阳扬江析亩木言球朝医校古呢稻宋听唯输滑站另卫字鼓刚写刘微略范供阿块某功套友限项余倒卷创律雨让骨远帮初皮播优占死毒圈伟季训控激找叫云互跟裂粮粒母练塞钢顶策双留误础吸阻故寸盾晚丝女散焊功株亲院冷彻弹错散商视艺灭版烈零室轻血倍缺厘泵察绝富城冲喷壤简否柱李望盘磁雄似困巩益洲脱投送奴侧润盖挥距触星松送获兴独官混纪依未突架宽冬章湿偏纹吃执阀矿寨责熟稳夺硬价努翻奇甲预职评读背协损棉侵灰虽矛厚罗泥辟告卵箱掌氧恩爱停曾溶营终纲孟钱待尽俄缩沙退陈讨奋械载胞幼哪剥迫旋征槽倒握担仍呀鲜吧卡粗介钻逐弱脚怕盐末阴丰雾冠丙街莱贝辐肠付吉渗瑞惊顿挤秒悬姆烂森糖圣凹陶词迟蚕亿矩康遵牧遭幅园腔订香肉弟屋敏恢忘编印蜂急拿扩伤飞露核缘游振操央伍域甚迅辉异序免纸夜乡久隶缸夹念兰映沟乙吗儒杀汽磷艰晶插埃燃欢铁补咱芽永瓦倾阵碳演威附牙芽永瓦斜灌欧献顺猪洋腐请透司危括脉宜笑若尾束壮暴企菜穗楚汉愈绿拖牛份染既秋遍锻玉夏疗尖殖井费州访吹荣铜沿替滚客召旱悟刺脑措贯藏敢令隙炉壳硫煤迎铸粘探临薄旬善福纵择礼愿伏残雷延烟句纯渐耕跑泽慢栽鲁赤繁境潮横掉锥希池败船假亮谓托伙哲怀割摆贡呈劲财仪沉炼麻罪祖息车穿货销齐鼠抽画饲龙库守筑房歌寒喜哥洗蚀废纳腹乎录镜妇恶脂庄擦险赞钟摇典柄辩竹谷卖乱虚桥奥伯赶垂途额壁网截野遗静谋弄挂课镇妄盛耐援扎虑键归符庆聚绕摩忙舞遇索顾胶羊湖钉仁音迹碎伸灯避泛亡答勇频皇柳哈揭甘诺概宪浓岛袭谁洪谢炮浇斑讯懂灵蛋闭孩释乳巨徒私银伊景坦累匀霉杜乐勒隔弯绩招绍胡呼痛峰零柴簧午跳居尚丁秦稍追梁折耗碱殊岗挖氏刃剧堆赫荷胸衡勤膜篇登驻案刊秧缓凸役剪川雪链渔啦脸户洛孢勃盟买杨宗焦赛旗滤硅炭股坐蒸凝竟陷枪黎救冒暗洞犯筒您宋弧爆谬涂味津臂障褐陆啊健尊豆拔莫抵桑坡缝警挑污冰柬嘴啥饭塑寄赵喊垫丹渡耳刨虎笔稀昆浪萨茶滴浅拥穴覆伦娘吨浸袖珠雌妈紫戏塔锤震岁貌洁剖牢锋疑霸闪埔猛诉刷狠忽灾闹乔唐漏闻沈熔氯荒茎男凡抢像浆旁玻亦忠唱蒙予纷捕锁尤乘乌智淡允叛畜俘摸锈扫毕璃宝芯爷鉴秘净蒋钙肩腾枯抛轨堂拌爸循诱祝励肯酒绳穷塘燥泡袋朗喂铝软渠颗惯贸粪综墙趋彼届墨碍启逆卸航衣孙龄岭骗休借" . $addChars;
-    		break;
-    	case 5:
-    		$chars = 'abcdefghijklmnopqrstuvwxyz1234567890' . $addChars;
-    		break;
-    	default:
-    		// 默认去掉了容易混淆的字符oOLl和数字01，要添加请使用addChars参数
-    		$chars = 'ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789' . $addChars;
-    		break;
-    	}
-    	if ($len > 10) {
-    //位数过长重复字符串一定次数
-    		$chars = $type == 1 ? str_repeat($chars, $len) : str_repeat($chars, 5);
-    	}
-    	if ($type != 4) {
-    		$chars = str_shuffle($chars);
-    		$str = substr($chars, 0, $len);
-    	} else {
-    		// 中文随机字
-    		for ($i = 0; $i < $len; $i++) {
-    			$str .= msubstr($chars, floor(mt_rand(0, mb_strlen($chars, 'utf-8') - 1)), 1);
-    		}
-    	}
-    	return $str;
-    }
+             if (!empty($data['range'])) {
+                 //主营
+                 imagettftext($im, 32,0, $borderWidth + 240, $borderWidth + 660, $font_color_1 ,$font_file, '主营经营');
+                 if (mb_strlen($data['range']) <= 27) {
+                     imagettftext($im, 18,0, $borderWidth + 28 + (27 - mb_strlen($data['range'])) / 2 * 21, $borderWidth + 715, $font_color_2 ,$font_file, $data['range']);
+                 }
+                 else if (mb_strlen($data['range']) <= 54){
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + 700, $font_color_2 ,$font_file, mb_substr($data['range'], 0, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28 + (54 - mb_strlen($data['range'])) / 2 * 21, $borderWidth + 740, $font_color_2 ,$font_file, mb_substr($data['range'], 27));
+                 }
+                 else if (mb_strlen($data['range']) <= 81){
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + 690, $font_color_2 ,$font_file, mb_substr($data['range'], 0, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + 720, $font_color_2 ,$font_file, mb_substr($data['range'], 27, 27));
+                     imagettftext($im, 18,0,  $borderWidth + 28 + (81 - mb_strlen($data['range'])) / 2 * 21, $borderWidth + 750, $font_color_2 ,$font_file, mb_substr($data['range'], 54));
+                 }
+                 else {
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + 690, $font_color_2 ,$font_file, mb_substr($data['range'], 0, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + 720, $font_color_2 ,$font_file, mb_substr($data['range'], 27, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + 750, $font_color_2 ,$font_file, mb_substr($data['range'], 54, 26) . '...');
+                 }
+             }
+             if(!empty($data['remark'])) {
+                 //公司简介
+                 imagettftext($im, 32,0, $borderWidth + 240, $borderWidth + $rangeWidth + 640 , $font_color_1 ,$font_file, '公司简介');
+                 if (mb_strlen($data['remark']) <= 27) {
+                     imagettftext($im, 18,0, $borderWidth + 28 + (27 - mb_strlen($data['remark'])) / 2 * 21, $borderWidth + $rangeWidth + 695, $font_color_2 ,$font_file, $data['remark']);
+                 }
+                 else if (mb_strlen($data['remark']) <= 54){
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 680, $font_color_2 ,$font_file, mb_substr($data['remark'], 0, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28 + (54 - mb_strlen($data['remark'])) / 2 * 21, $borderWidth + $rangeWidth +710, $font_color_2 ,$font_file, mb_substr($data['remark'], 27));
+                 }
+                 else if (mb_strlen($data['remark']) <= 81){
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 680, $font_color_2 ,$font_file, mb_substr($data['remark'], 0, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 710, $font_color_2 ,$font_file, mb_substr($data['remark'], 27, 27));
+                     imagettftext($im, 18,0,  $borderWidth + 28 + (81 - mb_strlen($data['remark'])) / 2 * 21, $borderWidth + $rangeWidth + 740, $font_color_2 ,$font_file, mb_substr($data['remark'], 54));
+                 }
+                 else if (mb_strlen($data['remark']) <= 108){
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 680, $font_color_2 ,$font_file, mb_substr($data['remark'], 0, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 710, $font_color_2 ,$font_file, mb_substr($data['remark'], 27, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 740, $font_color_2 ,$font_file, mb_substr($data['remark'], 54, 27));
+                     imagettftext($im, 18,0,  $borderWidth + 28 + (108 - mb_strlen($data['remark'])) / 2 * 21, $borderWidth + $rangeWidth + 770, $font_color_2 ,$font_file, mb_substr($data['remark'], 81));
+                 }
+                 else {
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 680, $font_color_2 ,$font_file, mb_substr($data['remark'], 0, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 710, $font_color_2 ,$font_file, mb_substr($data['remark'], 27, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 740, $font_color_2 ,$font_file, mb_substr($data['remark'], 54, 27));
+                     imagettftext($im, 18,0, $borderWidth + 28, $borderWidth + $rangeWidth + 770, $font_color_2 ,$font_file, mb_substr($data['remark'], 81, 26) . '...');
+                 }
+             }
+             //联系人
+             imagettftext($im, 18,0, $borderWidth + 25, $borderWidth + $rangeWidth + $remarkWidth + 690, $font_color_1 ,$font_file, '联系人: ');
+             if (mb_strlen($data['contact_name']) > 14) {
+                 $data['contact_name'] = mb_substr($data['contact_name'], 0, 14);
+             }
+             imagettftext($im, 18,0, $borderWidth + 25 + 85, $borderWidth + $rangeWidth + $remarkWidth + 690, $font_color_1 ,$font_file, $data['contact_name']);
 
-        /**
-         * 从图片文件创建Image资源
-         * @param $file 图片文件，支持url
-         * @return bool|resource    成功返回图片image资源，失败返回false
-         */
-        private function createImageFromFile($file){
-            if(preg_match('/http(s)?:\/\//',$file)){
-                $fileSuffix = $this->getNetworkImgType($file);
-            }else{
-                $fileSuffix = pathinfo($file, PATHINFO_EXTENSION);
-            }
-            if(!$fileSuffix) return false;
-            switch ($fileSuffix){
-                case 'jpeg':
-                    $theImage = @imagecreatefromjpeg($file);
-                    break;
-                case 'jpg':
-                    $theImage = @imagecreatefromjpeg($file);
-                    break;
-                case 'png':
-                    $theImage = @imagecreatefrompng($file);
-                    break;
-                case 'gif':
-                    $theImage = @imagecreatefromgif($file);
-                    break;
-                default:
-                    $theImage = @imagecreatefromstring(file_get_contents($file));
-                    break;
-            }
-            return $theImage;
-        }
+             //联系电话
+             imagettftext($im, 18,0, $borderWidth + 25, $borderWidth + $rangeWidth + $remarkWidth + 740, $font_color_1 ,$font_file, '联系电话: ');
+             if (mb_strlen($data['contact_phone']) > 15) {
+                 $data['contact_phone'] = mb_substr($data['contact_phone'], 0, 15);
+             }
+             imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 740, $font_color_1 ,$font_file, $data['contact_phone']);
+
+             if (!empty($data['contact_addr'])) {
+                 //联系地址
+                 imagettftext($im, 18,0, $borderWidth + 25, $borderWidth + $rangeWidth + $remarkWidth + 790, $font_color_1 ,$font_file, '联系地址: ');
+                 if (mb_strlen($data['contact_addr']) < 13) {
+                     imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 790, $font_color_1 ,$font_file, $data['contact_addr']);
+                 } elseif (mb_strlen($data['contact_addr']) < 26) {
+                     imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 790, $font_color_1 ,$font_file, mb_substr($data['contact_addr'], 0, 13));
+                     imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 820, $font_color_1 ,$font_file,  mb_substr($data['contact_addr'], 13));
+                 } elseif (mb_strlen($data['contact_addr']) < 39) {
+                     imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 790, $font_color_1 ,$font_file, mb_substr($data['contact_addr'], 0, 13));
+                     imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 820, $font_color_1 ,$font_file,  mb_substr($data['contact_addr'], 13, 13));
+                     imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 850, $font_color_1 ,$font_file,  mb_substr($data['contact_addr'], 26));
+                 } else {
+                     imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 790, $font_color_1 ,$font_file, mb_substr($data['contact_addr'], 0, 13));
+                     imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 820, $font_color_1 ,$font_file,  mb_substr($data['contact_addr'], 13, 13));
+                     imagettftext($im, 18,0, $borderWidth + 25 + 105, $borderWidth + $rangeWidth + $remarkWidth + 850, $font_color_1 ,$font_file,  mb_substr($data['contact_addr'], 26, 12) . '...');
+                 }
+             }
+             //输出图片
+             imagepng ($im, $fileName);
+             //释放空间
+             imagedestroy($im);
+             if (strstr($backgroundName, 'shop_default_img') === false) {
+                 unlink($backgroundName);
+             }
+             unlink($miniAppImgSource);
+             if (!empty($data['trademark'])) unlink($trademarkImgSrc);
+             dump($fileName);
+         }
+
+         //格式化推荐次数
+         private function formatBrowseCnt($browseCnt){
+             $browseCnt = intval($browseCnt);
+             if ($browseCnt < 100000) {
+                 return $browseCnt;
+             } elseif ($browseCnt < 1000000) {
+                 return floor($browseCnt / 10000) . 'W+';
+             }
+             return '100W+';
+         }
+
+         private function download($url, $path = ROOT_PATH . 'gd_demo/') {
+             $ch = curl_init();
+             curl_setopt($ch, CURLOPT_URL, $url);
+             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+             $file = curl_exec($ch);
+             curl_close($ch);
+             $filename = pathinfo($url, PATHINFO_BASENAME);
+             $newPath = $path . time() . $this->rand_string(6) . $filename;
+             $resource = fopen($newPath, 'a');
+             fwrite($resource, $file);
+             fclose($resource);
+             return $newPath;
+         }
+
+         private function rand_string($len = 6, $type = '', $addChars = '') {
+         	$str = '';
+         	switch ($type) {
+         	case 0:
+         		$chars = 'ABCDEFGHIJabcdefghijklmnopqrstuvwxyzKLMNOPQRSTUVWXYZ' . $addChars;
+         		break;
+         	case 1:
+         		$chars = str_repeat('0123456789', 3);
+         		break;
+         	case 2:
+         		$chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' . $addChars;
+         		break;
+         	case 3:
+         		$chars = 'abcdefghijklmnopqrstuvwxyz' . $addChars;
+         		break;
+         	case 4:
+         		$chars = "们以我到面说种过命度革而多子后自社加他会作时要动国产的一是工就年阶义发成部民可出能方进在了不和有大这主中人上为来分生对于学下级地个用同行着水理化争现所二起政三好十战无农使性前等反体合斗路图把结第里正新开论之物从当两些还天资事队批点育重其思与间内去因件日利相由压员气业代全组数果期导平各基或月毛然如应形想制心样干都向变关问比展那它最及外没看治提五解系林者米群头意只明四道马认次文通但条较克又公孔领军流入接席位情运器并飞原油放立题质指建区验活众很教决特此常石强极土少已根共直团统式转别造切九你取西持总料连任志观调七么山程百报更见必真保热委手改管处己将修支识病象几先老光专什六型具示复安带每东增则完风回南广劳轮科北打积车计给节做务被整联步类集号列温装即毫知轴研单色坚据速防史拉世设达尔场织历花受求传口断况采精金界品判参层止边清至万确究书术状厂须离再目海交权且儿青才证低越际八试规斯近注办布门铁需走议县兵固除般引齿千胜细影济白格效置推空配刀叶率述今选养德话查差半敌始片施响收华觉备名红续均药标记难存测士身紧液派准斤角降维板许破述技消底床田势端感往神便贺村构照容非搞亚磨族火段算适讲按值美态黄易彪服早班麦削信排台声该击素张密害侯草何树肥继右属市严径螺检左页抗苏显苦英快称坏移约巴材省黑武培著河帝仅针怎植京助升王眼她抓含苗副杂普谈围食射源例致酸旧却充足短划剂宣环落首尺波承粉践府鱼随考刻靠够满夫失包住促枝局菌杆周护岩师举曲春元超负砂封换太模贫减阳扬江析亩木言球朝医校古呢稻宋听唯输滑站另卫字鼓刚写刘微略范供阿块某功套友限项余倒卷创律雨让骨远帮初皮播优占死毒圈伟季训控激找叫云互跟裂粮粒母练塞钢顶策双留误础吸阻故寸盾晚丝女散焊功株亲院冷彻弹错散商视艺灭版烈零室轻血倍缺厘泵察绝富城冲喷壤简否柱李望盘磁雄似困巩益洲脱投送奴侧润盖挥距触星松送获兴独官混纪依未突架宽冬章湿偏纹吃执阀矿寨责熟稳夺硬价努翻奇甲预职评读背协损棉侵灰虽矛厚罗泥辟告卵箱掌氧恩爱停曾溶营终纲孟钱待尽俄缩沙退陈讨奋械载胞幼哪剥迫旋征槽倒握担仍呀鲜吧卡粗介钻逐弱脚怕盐末阴丰雾冠丙街莱贝辐肠付吉渗瑞惊顿挤秒悬姆烂森糖圣凹陶词迟蚕亿矩康遵牧遭幅园腔订香肉弟屋敏恢忘编印蜂急拿扩伤飞露核缘游振操央伍域甚迅辉异序免纸夜乡久隶缸夹念兰映沟乙吗儒杀汽磷艰晶插埃燃欢铁补咱芽永瓦倾阵碳演威附牙芽永瓦斜灌欧献顺猪洋腐请透司危括脉宜笑若尾束壮暴企菜穗楚汉愈绿拖牛份染既秋遍锻玉夏疗尖殖井费州访吹荣铜沿替滚客召旱悟刺脑措贯藏敢令隙炉壳硫煤迎铸粘探临薄旬善福纵择礼愿伏残雷延烟句纯渐耕跑泽慢栽鲁赤繁境潮横掉锥希池败船假亮谓托伙哲怀割摆贡呈劲财仪沉炼麻罪祖息车穿货销齐鼠抽画饲龙库守筑房歌寒喜哥洗蚀废纳腹乎录镜妇恶脂庄擦险赞钟摇典柄辩竹谷卖乱虚桥奥伯赶垂途额壁网截野遗静谋弄挂课镇妄盛耐援扎虑键归符庆聚绕摩忙舞遇索顾胶羊湖钉仁音迹碎伸灯避泛亡答勇频皇柳哈揭甘诺概宪浓岛袭谁洪谢炮浇斑讯懂灵蛋闭孩释乳巨徒私银伊景坦累匀霉杜乐勒隔弯绩招绍胡呼痛峰零柴簧午跳居尚丁秦稍追梁折耗碱殊岗挖氏刃剧堆赫荷胸衡勤膜篇登驻案刊秧缓凸役剪川雪链渔啦脸户洛孢勃盟买杨宗焦赛旗滤硅炭股坐蒸凝竟陷枪黎救冒暗洞犯筒您宋弧爆谬涂味津臂障褐陆啊健尊豆拔莫抵桑坡缝警挑污冰柬嘴啥饭塑寄赵喊垫丹渡耳刨虎笔稀昆浪萨茶滴浅拥穴覆伦娘吨浸袖珠雌妈紫戏塔锤震岁貌洁剖牢锋疑霸闪埔猛诉刷狠忽灾闹乔唐漏闻沈熔氯荒茎男凡抢像浆旁玻亦忠唱蒙予纷捕锁尤乘乌智淡允叛畜俘摸锈扫毕璃宝芯爷鉴秘净蒋钙肩腾枯抛轨堂拌爸循诱祝励肯酒绳穷塘燥泡袋朗喂铝软渠颗惯贸粪综墙趋彼届墨碍启逆卸航衣孙龄岭骗休借" . $addChars;
+         		break;
+         	case 5:
+         		$chars = 'abcdefghijklmnopqrstuvwxyz1234567890' . $addChars;
+         		break;
+         	default:
+         		// 默认去掉了容易混淆的字符oOLl和数字01，要添加请使用addChars参数
+         		$chars = 'ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789' . $addChars;
+         		break;
+         	}
+         	if ($len > 10) {
+         //位数过长重复字符串一定次数
+         		$chars = $type == 1 ? str_repeat($chars, $len) : str_repeat($chars, 5);
+         	}
+         	if ($type != 4) {
+         		$chars = str_shuffle($chars);
+         		$str = substr($chars, 0, $len);
+         	} else {
+         		// 中文随机字
+         		for ($i = 0; $i < $len; $i++) {
+         			$str .= msubstr($chars, floor(mt_rand(0, mb_strlen($chars, 'utf-8') - 1)), 1);
+         		}
+         	}
+         	return $str;
+         }
+
+             /**
+              * 从图片文件创建Image资源
+              * @param $file 图片文件，支持url
+              * @return bool|resource    成功返回图片image资源，失败返回false
+              */
+         private function createImageFromFile($file){
+             if(preg_match('/http(s)?:\/\//',$file)){
+                 $fileSuffix = $this->getNetworkImgType($file);
+             }else{
+                 $fileSuffix = pathinfo($file, PATHINFO_EXTENSION);
+             }
+             if(!$fileSuffix) return false;
+             switch ($fileSuffix){
+                 case 'jpeg':
+                     $theImage = @imagecreatefromjpeg($file);
+                     break;
+                 case 'jpg':
+                     $theImage = @imagecreatefromjpeg($file);
+                     break;
+                 case 'png':
+                     $theImage = @imagecreatefrompng($file);
+                     if (!$theImage) {
+                         $theImage = @imagecreatefromjpeg($file);
+
+                     }
+                     break;
+                 case 'gif':
+                     $theImage = @imagecreatefromgif($file);
+                     break;
+                 default:
+                     $theImage = @imagecreatefromstring(file_get_contents($file));
+                     break;
+             }
+
+             return $theImage;
+         }
 }

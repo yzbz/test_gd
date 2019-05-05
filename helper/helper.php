@@ -10,6 +10,7 @@ $demoDir = ROOT_PATH . "gd_demo";
 $extendFiles = [
     'ziti.ttf',
     'bg.png',
+    'shop_default_img.jpg',
 ]; //当前目录下使用的文件
 
 if (!file_exists($demoDir . '/' . $extendFiles[0])) {
