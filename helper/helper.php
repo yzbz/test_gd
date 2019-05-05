@@ -8,7 +8,7 @@ if(IS_CLI){
 $demoDir = ROOT_PATH . "gd_demo";
 
 $extendFiles = [
-    'fzhtjt.ttf',
+    'ziti.ttf',
     'bg.png',
 ]; //当前目录下使用的文件
 

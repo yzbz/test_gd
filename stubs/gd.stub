@@ -24,7 +24,7 @@ class {%className%} extends Controller {
             $color = imagecolorallocate($im, 255, 255, 255);
             imagefill($im, 0, 0, $color);
             //字体文件
-            $font_file = ROOT_PATH . "gd_demo/fzhtjt.ttf";
+            $font_file = ROOT_PATH . "gd_demo/ziti.ttf";
             //设定字体的颜色
             $font_color_1 = ImageColorAllocate ($im, 115, 39, 30); //电话底色 改为深红色
             $font_color_2 = ImageColorAllocate ($im, 253, 241, 218); //白色
